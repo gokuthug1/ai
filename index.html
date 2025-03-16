@@ -856,57 +856,67 @@
 
         // Display a message and check for link previews.
         function displayMessage(content, sender, isHTML = false) {
-            const messageEl = document.createElement('div');
-            messageEl.className = `message ${sender}`;
-            addDeleteListener(messageEl);
-            const contentEl = document.createElement('div');
-            contentEl.className = 'message-content';
-            contentEl[isHTML ? "innerHTML" : "textContent"] = content;
-            messageEl.appendChild(contentEl);
-            document.getElementById('message-area').appendChild(messageEl);
-            document.getElementById('message-area').scrollTop = document.getElementById('message-area').scrollHeight;
-            if (!isHTML) {
-                checkForLinkPreview(contentEl, content);
-            }
-            return messageEl;
-        }
+  const messageEl = document.createElement('div');
+  messageEl.className = `message ${sender}`;
+  addDeleteListener(messageEl);
+  const contentEl = document.createElement('div');
+  contentEl.className = 'message-content';
 
+  if (!isHTML) {
+    // First escape HTML, then convert markdown bold syntax to <strong> tags.
+    contentEl.innerHTML = parseBold(escapeHTML(content));
+  } else {
+    contentEl.innerHTML = content;
+  }
+
+  messageEl.appendChild(contentEl);
+  document.getElementById('message-area').appendChild(messageEl);
+  document.getElementById('message-area').scrollTop =
+    document.getElementById('message-area').scrollHeight;
+  
+  if (!isHTML) {
+    // Use the original plain text for link previews if needed.
+    checkForLinkPreview(contentEl, content);
+  }
+  return messageEl;
+}
         // Typewriter effect for bot messages with TTS.
         function displayMessageWithTyping(content, sender) {
-            const messageEl = document.createElement('div');
-            messageEl.className = `message ${sender}`;
-            addDeleteListener(messageEl);
-            const contentEl = document.createElement('div');
-            contentEl.className = 'message-content';
-            messageEl.appendChild(contentEl);
-            document.getElementById('message-area').appendChild(messageEl);
-            document.getElementById('message-area').scrollTop = document.getElementById('message-area').scrollHeight;
+  const messageEl = document.createElement('div');
+  messageEl.className = `message ${sender}`;
+  addDeleteListener(messageEl);
+  const contentEl = document.createElement('div');
+  contentEl.className = 'message-content';
+  messageEl.appendChild(contentEl);
+  document.getElementById('message-area').appendChild(messageEl);
+  document.getElementById('message-area').scrollTop =
+    document.getElementById('message-area').scrollHeight;
 
-            // Start TTS 1 second after typing starts.
-            if (sender === 'bot' && ttsEnabled) {
-                setTimeout(() => {
-                    speakTTS(content);
-                }, 400);
-            }
+  if (sender === 'bot' && ttsEnabled) {
+    setTimeout(() => {
+      speakTTS(content);
+    }, 400);
+  }
 
-            let typedMessage = '';
-            let charIndex = 0;
-            const typingDelay = 8;
+  let typedMessage = '';
+  let charIndex = 0;
+  const typingDelay = 8;
 
-            function typeLetter() {
-                if (charIndex < content.length) {
-                    typedMessage += content.charAt(charIndex);
-                    contentEl.textContent = typedMessage + '●';
-                    charIndex++;
-                    setTimeout(typeLetter, typingDelay);
-                } else {
-                    setTimeout(() => {
-                        contentEl.textContent = typedMessage;
-                    }, 500);
-                }
-            }
-            typeLetter();
-        }
+  function typeLetter() {
+    if (charIndex < content.length) {
+      typedMessage += content.charAt(charIndex);
+      // Update the innerHTML with escaped text then parse for bold formatting.
+      contentEl.innerHTML = parseBold(escapeHTML(typedMessage)) + '●';
+      charIndex++;
+      setTimeout(typeLetter, typingDelay);
+    } else {
+      setTimeout(() => {
+        contentEl.innerHTML = parseBold(escapeHTML(typedMessage));
+      }, 500);
+    }
+  }
+  typeLetter();
+}
 
         // API configuration
         const API_KEY = "AIzaSyA7XJr5wciy4ujOx8JG2RFoC3CY_WIHzYo"; // Your API key here
@@ -990,13 +1000,19 @@
                 let embedHTML = '';
 
                 function escapeHTML(text) {
-                    return text
-                        .replace(/&/g, '&amp;')
-                        .replace(/</g, '&lt;')
-                        .replace(/>/g, '&gt;')
-                        .replace(/"/g, '&quot;')
-                        .replace(/'/g, '&#39;');
-                }
+  return text
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+function parseBold(text) {
+  // This regex finds any text between two pairs of asterisks and replaces it with a <strong> element.
+  return text.replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>");
+}
+
 
                 if (file.type === 'text/html') {
                     embedHTML = `<div><h3>HTML File Content:</h3><pre>${escapeHTML(fileContent)}</pre></div>`;
