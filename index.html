@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -815,6 +816,19 @@
             }
         }
 
+        function escapeHTML(text) {
+            return text
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;');
+        }
+
+        function parseBold(text) {
+            return text.replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>");
+        }
+
         function displayMessage(content, sender, isHTML = false) {
             const messageEl = document.createElement('div');
             messageEl.className = `message ${sender}`;
@@ -945,19 +959,6 @@
             reader.onload = function() {
                 const fileContent = reader.result;
                 let embedHTML = '';
-
-                function escapeHTML(text) {
-                    return text
-                        .replace(/&/g, '&amp;')
-                        .replace(/</g, '&lt;')
-                        .replace(/>/g, '&gt;')
-                        .replace(/"/g, '&quot;')
-                        .replace(/'/g, '&#39;');
-                }
-
-                function parseBold(text) {
-                    return text.replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>");
-                }
 
                 if (file.type === 'text/html') {
                     embedHTML = `<div><h3>HTML File Content:</h3><pre>${escapeHTML(fileContent)}</pre></div>`;
