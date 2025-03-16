@@ -829,7 +829,7 @@
         }
 
         function parseItalic(text) {
-            return text.replace(/_(.*?)_/g, "<em>$1</em>");
+            return text.replace(/\*(.*?)\*/g, "<em>$1</em>"); // Change to single asterisk
         }
 
         function parseHeadings(text) {
@@ -845,10 +845,9 @@
             addDeleteListener(messageEl);
             const contentEl = document.createElement('div');
             contentEl.className = 'message-content';
-            }
 
             if (!isHTML) {
-                contentEl.innerHTML = parseBold(parseItalic(parseHeadings(escapeHTML(replaceUrlsWithLinks(content)))));
+                contentEl.innerHTML = parseBold(parseItalic(parseHeadings(escapeHTML(content))));
             } else {
                 contentEl.innerHTML = parseBold(parseItalic(parseHeadings(content)));
             }
