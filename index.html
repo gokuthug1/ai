@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -829,42 +828,53 @@
             return text.replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>");
         }
 
+        function parseItalic(text) {
+            return text.replace(/_(.*?)_/g, "<em>$1</em>");
+        }
+
+        function parseHeadings(text) {
+            return text.replace(/^(#{1,6})\s*(.*)$/gm, (match, hashes, title) => {
+                const level = hashes.length;
+                return `<h${level}>${title}</h${level}>`;
+            });
+        }
+
         function displayMessage(content, sender, isHTML = false) {
-    const messageEl = document.createElement('div');
-    messageEl.className = `message ${sender}`;
-    addDeleteListener(messageEl);
-    const contentEl = document.createElement('div');
-    contentEl.className = 'message-content';
+            const messageEl = document.createElement('div');
+            messageEl.className = `message ${sender}`;
+            addDeleteListener(messageEl);
+            const contentEl = document.createElement('div');
+            contentEl.className = 'message-content';
 
-    // Function to replace URLs with customizable links
-    function replaceUrlsWithLinks(text) {
-        const urlRegex = /https?:\/\/[^\s]+/g;
-        return text.replace(urlRegex, (url) => {
-            // Customize the display name for specific URLs as needed
-            let displayName = url; // Default to the URL itself
-            if (url === "https://www.drugabuse.gov/") {
-                displayName = "[https://www.drugabuse.gov/](https://www.drugabuse.gov/)";
+            // Function to replace URLs with customizable links
+            function replaceUrlsWithLinks(text) {
+                const urlRegex = /https?:\/\/[^\s]+/g;
+                return text.replace(urlRegex, (url) => {
+                    let displayName = url; // Default to the URL itself
+                    if (url === "https://www.drugabuse.gov/") {
+                        displayName = "[https://www.drugabuse.gov/](https://www.drugabuse.gov/)";
+                    }
+                    return `<a href="${url}" target="_blank" style="color: blue; text-decoration: underline;">${displayName}</a>`;
+                });
             }
-            return `<a href="${url}" target="_blank" style="color: blue; text-decoration: underline;">${displayName}</a>`;
-        });
-    }
 
-    if (!isHTML) {
-        contentEl.innerHTML = parseBold(escapeHTML(replaceUrlsWithLinks(content)));
-    } else {
-        contentEl.innerHTML = replaceUrlsWithLinks(content);
-    }
+            if (!isHTML) {
+                contentEl.innerHTML = parseBold(parseItalic(parseHeadings(escapeHTML(replaceUrlsWithLinks(content)))));
+            } else {
+                contentEl.innerHTML = parseBold(parseItalic(parseHeadings(content)));
+            }
 
-    messageEl.appendChild(contentEl);
-    document.getElementById('message-area').appendChild(messageEl);
-    document.getElementById('message-area').scrollTop =
-        document.getElementById('message-area').scrollHeight;
+            messageEl.appendChild(contentEl);
+            document.getElementById('message-area').appendChild(messageEl);
+            document.getElementById('message-area').scrollTop =
+                document.getElementById('message-area').scrollHeight;
 
-    if (!isHTML) {
-        checkForLinkPreview(contentEl, content);
-    }
-    return messageEl;
-}
+            if (!isHTML) {
+                checkForLinkPreview(contentEl, content);
+            }
+            return messageEl;
+        }
+
         function displayMessageWithTyping(content, sender) {
             const messageEl = document.createElement('div');
             messageEl.className = `message ${sender}`;
@@ -889,19 +899,19 @@
             function typeLetter() {
                 if (charIndex < content.length) {
                     typedMessage += content.charAt(charIndex);
-                    contentEl.innerHTML = parseBold(escapeHTML(typedMessage)) + '●';
+                    contentEl.innerHTML = parseBold(parseItalic(parseHeadings(typedMessage))) + '●';
                     charIndex++;
                     setTimeout(typeLetter, typingDelay);
                 } else {
                     setTimeout(() => {
-                        contentEl.innerHTML = parseBold(escapeHTML(typedMessage));
+                        contentEl.innerHTML = parseBold(parseItalic(parseHeadings(typedMessage)));
                     }, 500);
                 }
             }
             typeLetter();
         }
 
-        const API_KEY = "AIzaSyA7XJr5wciy4ujOx8JG2RFoC3CY_WIHzYo"; 
+        const API_KEY = "YOUR_API_KEY_HERE"; 
         const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`;
 
         const generateResponse = async (chatElement, userMessage) => {
