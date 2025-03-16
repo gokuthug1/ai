@@ -12,13 +12,11 @@
                 opacity: 1;
                 transform: scale(1);
             }
-
             to {
                 opacity: 0;
                 transform: scale(0.9);
             }
         }
-
         .fade-out {
             animation: fadeOut 0.4s ease forwards;
         }
@@ -73,15 +71,12 @@
             align-items: flex-start;
             box-sizing: border-box;
         }
-
         .message.user {
             justify-content: flex-end;
         }
-
         .message.bot {
             justify-content: flex-start;
         }
-
         .message-content {
             padding: 10px;
             border-radius: 15px;
@@ -91,12 +86,10 @@
             white-space: pre-wrap;
             box-sizing: border-box;
         }
-
         .message.user .message-content {
             background-color: #f4f4f4;
             align-self: flex-end;
         }
-
         .message.bot .message-content code {
             background-color: #000;
             color: #fff;
@@ -118,7 +111,6 @@
             width: 100%;
             box-sizing: border-box;
         }
-
         textarea {
             flex: 1;
             border: none;
@@ -181,7 +173,7 @@
         /* Options Card */
         .options-card {
             position: absolute;
-            bottom: 60px; /* Above the input area */
+            bottom: 60px;
             left: 10px;
             background-color: #fff;
             border: 1px solid #000;
@@ -244,7 +236,6 @@
                 transform: translateY(20px);
                 opacity: 0;
             }
-
             to {
                 transform: translateY(0);
                 opacity: 1;
@@ -429,12 +420,10 @@
     </style>
 </head>
 <body>
-    <!-- Hidden file input for file uploads -->
     <input type="file" id="file-upload" style="display: none;" />
     <div class="chat-container">
         <div id="message-area" class="message-area"></div>
         <div class="chat-input-container">
-            <!-- Plus Toggle Button -->
             <button id="toggle-options-button" title="Options">
                 <svg viewBox="0 0 24 24">
                     <path d="M12 5v14M5 12h14" stroke="#fff" stroke-width="2" stroke-linecap="round"></path>
@@ -449,14 +438,11 @@
         </div>
     </div>
     <script>
-        // Global settings variables.
         let ttsEnabled = false;
         let selectedVoice = null;
-        let ttsVolume = 1; // New global volume (0-1)
+        let ttsVolume = 1; 
         let optionsCard = null;
         let filteredVoices = [];
-
-        // New global variables for music feature.
         let awaitingMusicRequest = false;
         let musicList = [
             { name: "All 2 U", url: "https://audio.jukehost.co.uk/og7I6eTNzGvVdRpBsgUAtgZU6v1bLSJt" },
@@ -478,7 +464,6 @@
         let currentSongIndex = 0;
         let audioPlayer = new Audio();
 
-        // Function to speak text using the Web Speech API.
         function speakTTS(text) {
             if (window.speechSynthesis && ttsEnabled && text.trim() !== '') {
                 const utterance = new SpeechSynthesisUtterance(text);
@@ -490,14 +475,12 @@
             }
         }
 
-        // Populate the voice selection dropdown with filtered voices.
         function populateVoiceList() {
             const voiceSelect = document.getElementById('voiceSelect');
             if (!voiceSelect) return;
             const voices = window.speechSynthesis.getVoices();
             const allowedKeywords = ["David", "Mark", "Zira", "UK", "English"];
 
-            // Allow Spanish voices too.
             filteredVoices = voices.filter(voice => {
                 if (voice.lang.startsWith("es")) return true;
                 if (voice.lang.startsWith("en")) {
@@ -524,7 +507,6 @@
             window.speechSynthesis.onvoiceschanged = populateVoiceList;
         }
 
-        // Show the settings modal.
         function showSettingsModal() {
             const overlay = document.createElement('div');
             overlay.className = 'modal-overlay';
@@ -534,7 +516,6 @@
             title.textContent = 'Settings';
             card.appendChild(title);
 
-            // TTS toggle row using switch.
             const ttsRow = document.createElement('div');
             ttsRow.className = 'settings-row';
             const ttsLabel = document.createElement('label');
@@ -555,7 +536,6 @@
             ttsRow.appendChild(switchLabel);
             card.appendChild(ttsRow);
 
-            // Voice Volume row with percentage display.
             const volumeRow = document.createElement('div');
             volumeRow.className = 'settings-row';
             const volumeLabel = document.createElement('label');
@@ -568,12 +548,10 @@
             volumeSlider.value = ttsVolume;
             volumeSlider.className = 'volume-slider';
 
-            // Create a span to display the percentage value.
             const volumePercentage = document.createElement('span');
             volumePercentage.className = 'volume-percentage';
             volumePercentage.textContent = Math.round(ttsVolume * 100) + '%';
 
-            // Update volume and percentage display on slider input.
             volumeSlider.addEventListener('input', () => {
                 ttsVolume = parseFloat(volumeSlider.value);
                 volumePercentage.textContent = Math.round(ttsVolume * 100) + '%';
@@ -584,7 +562,6 @@
             volumeRow.appendChild(volumePercentage);
             card.appendChild(volumeRow);
 
-            // Voice selection row.
             const voiceRow = document.createElement('div');
             voiceRow.className = 'settings-row';
             const voiceLabel = document.createElement('label');
@@ -598,7 +575,6 @@
             voiceRow.appendChild(voiceSelect);
             card.appendChild(voiceRow);
 
-            // Close button.
             const closeBtn = document.createElement('button');
             closeBtn.textContent = 'Save & Close';
             closeBtn.addEventListener('click', () => {
@@ -610,7 +586,6 @@
             populateVoiceList();
         }
 
-        // Toggle the Options Card.
         function toggleOptionsCard() {
             if (optionsCard) {
                 optionsCard.remove();
@@ -620,7 +595,6 @@
                 optionsCard = document.createElement('div');
                 optionsCard.className = 'options-card show';
 
-                // Settings Button.
                 const settingsBtn = document.createElement('button');
                 settingsBtn.title = 'Settings';
                 settingsBtn.innerHTML = `
@@ -633,7 +607,6 @@
                 });
                 optionsCard.appendChild(settingsBtn);
 
-                // File Upload Button.
                 const fileUploadBtn = document.createElement('button');
                 fileUploadBtn.title = 'Upload File';
                 fileUploadBtn.innerHTML = `
@@ -646,21 +619,18 @@
                 });
                 optionsCard.appendChild(fileUploadBtn);
 
-                // Position the options card relative to the toggle button.
                 const toggleBtn = document.getElementById('toggle-options-button');
                 const btnRect = toggleBtn.getBoundingClientRect();
                 optionsCard.style.bottom = (window.innerHeight - btnRect.top + 10) + "px";
                 optionsCard.style.left = btnRect.left + "px";
                 document.body.appendChild(optionsCard);
 
-                // Add outside click listener.
                 setTimeout(() => {
                     document.addEventListener('click', outsideClickListener);
                 }, 10);
             }
         }
 
-        // Outside click listener to close the options card.
         function outsideClickListener(event) {
             const toggleBtn = document.getElementById('toggle-options-button');
             if (optionsCard && !optionsCard.contains(event.target) && !toggleBtn.contains(event.target)) {
@@ -676,13 +646,11 @@
             }
         }
 
-        // Toggle options card when the plus button is clicked.
         document.getElementById('toggle-options-button').addEventListener('click', (e) => {
             e.stopPropagation();
             toggleOptionsCard();
         });
 
-        // Helper function to delete a message with fade-out animation.
         function deleteMessage(messageEl) {
             messageEl.classList.add('fade-out');
             setTimeout(() => {
@@ -690,7 +658,6 @@
             }, 400);
         }
 
-        // Show modal confirmation for deletion (mobile).
         function showConfirmation(messageEl) {
             const overlay = document.createElement('div');
             overlay.className = 'modal-overlay';
@@ -718,7 +685,6 @@
             document.body.appendChild(overlay);
         }
 
-        // Attach deletion listeners (shift-click on PC, long press on mobile).
         function addDeleteListener(messageEl) {
             messageEl.addEventListener('click', (e) => {
                 if (e.shiftKey) {
@@ -739,7 +705,6 @@
             });
         }
 
-        // Helper functions for link previews.
         async function updatePreviewWithFavicon(previewElement, pageUrl) {
             try {
                 const response = await fetch(pageUrl);
@@ -748,7 +713,6 @@
                 const parser = new DOMParser();
                 const doc = parser.parseFromString(htmlText, 'text/html');
 
-                // Try various selectors for favicon links:
                 let iconLink = doc.querySelector('link[rel="icon"]') ||
                     doc.querySelector('link[rel="apple-touch-icon"]') ||
                     doc.querySelector('link[rel="apple-touch-icon-precomposed"]');
@@ -757,14 +721,12 @@
                 if (iconLink && iconLink.getAttribute('href')) {
                     faviconUrl = iconLink.getAttribute('href');
                     try {
-                        // Resolve relative URLs against the page URL.
                         faviconUrl = new URL(faviconUrl, pageUrl).href;
                     } catch (e) {
                         console.error("Error resolving favicon URL:", e);
                     }
                 }
 
-                // Fallback: use /favicon.ico if no icon was found.
                 if (!faviconUrl) {
                     try {
                         const urlObj = new URL(pageUrl);
@@ -774,7 +736,6 @@
                     }
                 }
 
-                // Update the preview image if available.
                 const imgEl = previewElement.querySelector('img');
                 if (imgEl && faviconUrl) {
                     imgEl.src = faviconUrl;
@@ -854,83 +815,76 @@
             }
         }
 
-        // Display a message and check for link previews.
         function displayMessage(content, sender, isHTML = false) {
-  const messageEl = document.createElement('div');
-  messageEl.className = `message ${sender}`;
-  addDeleteListener(messageEl);
-  const contentEl = document.createElement('div');
-  contentEl.className = 'message-content';
+            const messageEl = document.createElement('div');
+            messageEl.className = `message ${sender}`;
+            addDeleteListener(messageEl);
+            const contentEl = document.createElement('div');
+            contentEl.className = 'message-content';
 
-  if (!isHTML) {
-    // First escape HTML, then convert markdown bold syntax to <strong> tags.
-    contentEl.innerHTML = parseBold(escapeHTML(content));
-  } else {
-    contentEl.innerHTML = content;
-  }
+            if (!isHTML) {
+                contentEl.innerHTML = parseBold(escapeHTML(content));
+            } else {
+                contentEl.innerHTML = content;
+            }
 
-  messageEl.appendChild(contentEl);
-  document.getElementById('message-area').appendChild(messageEl);
-  document.getElementById('message-area').scrollTop =
-    document.getElementById('message-area').scrollHeight;
-  
-  if (!isHTML) {
-    // Use the original plain text for link previews if needed.
-    checkForLinkPreview(contentEl, content);
-  }
-  return messageEl;
-}
-        // Typewriter effect for bot messages with TTS.
+            messageEl.appendChild(contentEl);
+            document.getElementById('message-area').appendChild(messageEl);
+            document.getElementById('message-area').scrollTop =
+                document.getElementById('message-area').scrollHeight;
+
+            if (!isHTML) {
+                checkForLinkPreview(contentEl, content);
+            }
+            return messageEl;
+        }
+
         function displayMessageWithTyping(content, sender) {
-  const messageEl = document.createElement('div');
-  messageEl.className = `message ${sender}`;
-  addDeleteListener(messageEl);
-  const contentEl = document.createElement('div');
-  contentEl.className = 'message-content';
-  messageEl.appendChild(contentEl);
-  document.getElementById('message-area').appendChild(messageEl);
-  document.getElementById('message-area').scrollTop =
-    document.getElementById('message-area').scrollHeight;
+            const messageEl = document.createElement('div');
+            messageEl.className = `message ${sender}`;
+            addDeleteListener(messageEl);
+            const contentEl = document.createElement('div');
+            contentEl.className = 'message-content';
+            messageEl.appendChild(contentEl);
+            document.getElementById('message-area').appendChild(messageEl);
+            document.getElementById('message-area').scrollTop =
+                document.getElementById('message-area').scrollHeight;
 
-  if (sender === 'bot' && ttsEnabled) {
-    setTimeout(() => {
-      speakTTS(content);
-    }, 400);
-  }
+            if (sender === 'bot' && ttsEnabled) {
+                setTimeout(() => {
+                    speakTTS(content);
+                }, 400);
+            }
 
-  let typedMessage = '';
-  let charIndex = 0;
-  const typingDelay = 8;
+            let typedMessage = '';
+            let charIndex = 0;
+            const typingDelay = 8;
 
-  function typeLetter() {
-    if (charIndex < content.length) {
-      typedMessage += content.charAt(charIndex);
-      // Update the innerHTML with escaped text then parse for bold formatting.
-      contentEl.innerHTML = parseBold(escapeHTML(typedMessage)) + '●';
-      charIndex++;
-      setTimeout(typeLetter, typingDelay);
-    } else {
-      setTimeout(() => {
-        contentEl.innerHTML = parseBold(escapeHTML(typedMessage));
-      }, 500);
-    }
-  }
-  typeLetter();
-}
+            function typeLetter() {
+                if (charIndex < content.length) {
+                    typedMessage += content.charAt(charIndex);
+                    contentEl.innerHTML = parseBold(escapeHTML(typedMessage)) + '●';
+                    charIndex++;
+                    setTimeout(typeLetter, typingDelay);
+                } else {
+                    setTimeout(() => {
+                        contentEl.innerHTML = parseBold(escapeHTML(typedMessage));
+                    }, 500);
+                }
+            }
+            typeLetter();
+        }
 
-        // API configuration
-        const API_KEY = "AIzaSyA7XJr5wciy4ujOx8JG2RFoC3CY_WIHzYo"; // Your API key here
+        const API_KEY = "AIzaSyA7XJr5wciy4ujOx8JG2RFoC3CY_WIHzYo"; 
         const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`;
 
         const generateResponse = async (chatElement, userMessage) => {
-            // Create a new <p> element if it doesn't exist
             let messageElement = chatElement.querySelector("p");
             if (!messageElement) {
                 messageElement = document.createElement("p");
                 chatElement.appendChild(messageElement);
             }
 
-            // Define the properties and message for the API request
             const requestOptions = {
                 method: "POST",
                 headers: {
@@ -946,17 +900,14 @@
                 }),
             };
 
-            // Send POST request to API, get response and set the response as paragraph text
             try {
                 const response = await fetch(API_URL, requestOptions);
                 const data = await response.json();
                 if (!response.ok) throw new Error(data.error.message);
 
-                // Get the API response text and update the message element
                 const botResponse = data.candidates[0].content.parts[0].text.replace(/<\/?strong>/g, "");
                 displayMessageWithTyping(botResponse, "bot");
             } catch (error) {
-                // Handle error
                 messageElement.classList.add("error");
                 messageElement.textContent = error.message;
             } finally {
@@ -966,16 +917,13 @@
 
         const handleChat = () => {
             const chatInput = document.getElementById('chat-input');
-            const userMessage = chatInput.value.trim(); // Get user entered message and remove extra whitespace
-            if (!userMessage) return; // Don't process empty messages
+            const userMessage = chatInput.value.trim(); 
+            if (!userMessage) return; 
 
-            // Clear the input textarea
             chatInput.value = "";
 
-            // Append the user's message to the chatbox
             displayMessage(userMessage, 'user');
 
-            // Call the generateResponse function
             setTimeout(() => {
                 generateResponse(document.createElement('div'), userMessage);
             }, 600);
@@ -990,7 +938,6 @@
 
         document.getElementById('send-button').addEventListener('click', handleChat);
 
-        // File upload handler.
         function handleFileUpload(event) {
             const file = event.target.files[0];
             if (!file) return;
@@ -1000,19 +947,17 @@
                 let embedHTML = '';
 
                 function escapeHTML(text) {
-  return text
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#39;');
-}
+                    return text
+                        .replace(/&/g, '&amp;')
+                        .replace(/</g, '&lt;')
+                        .replace(/>/g, '&gt;')
+                        .replace(/"/g, '&quot;')
+                        .replace(/'/g, '&#39;');
+                }
 
-function parseBold(text) {
-  // This regex finds any text between two pairs of asterisks and replaces it with a <strong> element.
-  return text.replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>");
-}
-
+                function parseBold(text) {
+                    return text.replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>");
+                }
 
                 if (file.type === 'text/html') {
                     embedHTML = `<div><h3>HTML File Content:</h3><pre>${escapeHTML(fileContent)}</pre></div>`;
