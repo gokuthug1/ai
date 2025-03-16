@@ -845,17 +845,6 @@
             addDeleteListener(messageEl);
             const contentEl = document.createElement('div');
             contentEl.className = 'message-content';
-
-            // Function to replace URLs with customizable links
-            function replaceUrlsWithLinks(text) {
-                const urlRegex = /https?:\/\/[^\s]+/g;
-                return text.replace(urlRegex, (url) => {
-                    let displayName = url; // Default to the URL itself
-                    if (url === "https://www.drugabuse.gov/") {
-                        displayName = "[https://www.drugabuse.gov/](https://www.drugabuse.gov/)";
-                    }
-                    return `<a href="${url}" target="_blank" style="color: blue; text-decoration: underline;">${displayName}</a>`;
-                });
             }
 
             if (!isHTML) {
@@ -911,7 +900,7 @@
             typeLetter();
         }
 
-        const API_KEY = "YOUR_API_KEY_HERE"; 
+        const API_KEY = "AIzaSyA7XJr5wciy4ujOx8JG2RFoC3CY_WIHzYo"; 
         const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`;
 
         const generateResponse = async (chatElement, userMessage) => {
