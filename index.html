@@ -830,29 +830,41 @@
         }
 
         function displayMessage(content, sender, isHTML = false) {
-            const messageEl = document.createElement('div');
-            messageEl.className = `message ${sender}`;
-            addDeleteListener(messageEl);
-            const contentEl = document.createElement('div');
-            contentEl.className = 'message-content';
+    const messageEl = document.createElement('div');
+    messageEl.className = `message ${sender}`;
+    addDeleteListener(messageEl);
+    const contentEl = document.createElement('div');
+    contentEl.className = 'message-content';
 
-            if (!isHTML) {
-                contentEl.innerHTML = parseBold(escapeHTML(content));
-            } else {
-                contentEl.innerHTML = content;
+    // Function to replace URLs with customizable links
+    function replaceUrlsWithLinks(text) {
+        const urlRegex = /https?:\/\/[^\s]+/g;
+        return text.replace(urlRegex, (url) => {
+            // Customize the display name for specific URLs as needed
+            let displayName = url; // Default to the URL itself
+            if (url === "https://www.drugabuse.gov/") {
+                displayName = "[https://www.drugabuse.gov/](https://www.drugabuse.gov/)";
             }
+            return `<a href="${url}" target="_blank" style="color: blue; text-decoration: underline;">${displayName}</a>`;
+        });
+    }
 
-            messageEl.appendChild(contentEl);
-            document.getElementById('message-area').appendChild(messageEl);
-            document.getElementById('message-area').scrollTop =
-                document.getElementById('message-area').scrollHeight;
+    if (!isHTML) {
+        contentEl.innerHTML = parseBold(escapeHTML(replaceUrlsWithLinks(content)));
+    } else {
+        contentEl.innerHTML = replaceUrlsWithLinks(content);
+    }
 
-            if (!isHTML) {
-                checkForLinkPreview(contentEl, content);
-            }
-            return messageEl;
-        }
+    messageEl.appendChild(contentEl);
+    document.getElementById('message-area').appendChild(messageEl);
+    document.getElementById('message-area').scrollTop =
+        document.getElementById('message-area').scrollHeight;
 
+    if (!isHTML) {
+        checkForLinkPreview(contentEl, content);
+    }
+    return messageEl;
+}
         function displayMessageWithTyping(content, sender) {
             const messageEl = document.createElement('div');
             messageEl.className = `message ${sender}`;
