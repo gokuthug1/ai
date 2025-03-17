@@ -98,6 +98,16 @@
             overflow-x: auto;
         }
 
+        /* Code Block Styles */
+        .code-block {
+            background-color: #f5f5f5;
+            border-radius: 5px;
+            padding: 10px;
+            overflow-x: auto;
+            white-space: pre;
+            font-family: monospace;
+        }
+
         /* Chat Input Area */
         .chat-input-container {
             display: flex;
@@ -829,13 +839,19 @@
         }
 
         function parseItalic(text) {
-            return text.replace(/\*(.*?)\*/g, "<em>$1</em>"); // Change to single asterisk
+            return text.replace(/\*(.*?)\*/g, "<em>$1</em>");
         }
 
         function parseHeadings(text) {
             return text.replace(/^(#{1,6})\s*(.*)$/gm, (match, hashes, title) => {
                 const level = hashes.length;
                 return `<h${level}>${title}</h${level}>`;
+            });
+        }
+
+        function parseCodeBlock(text) {
+            return text.replace(/```([\s\S]*?)```/g, (match, code) => {
+                return `<div class="code-block">${escapeHTML(code.trim())}</div>`;
             });
         }
 
@@ -847,9 +863,9 @@
             contentEl.className = 'message-content';
 
             if (!isHTML) {
-                contentEl.innerHTML = parseBold(parseItalic(parseHeadings(escapeHTML(content))));
+                contentEl.innerHTML = parseBold(parseItalic(parseHeadings(parseCodeBlock(escapeHTML(content)))));
             } else {
-                contentEl.innerHTML = parseBold(parseItalic(parseHeadings(content)));
+                contentEl.innerHTML = parseBold(parseItalic(parseHeadings(parseCodeBlock(content))));
             }
 
             messageEl.appendChild(contentEl);
